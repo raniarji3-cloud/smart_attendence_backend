@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import sqlite3
 from datetime import datetime
 
 app = Flask(__name__)
+CORS(app)
 
 DATABASE = "database.db"
 
@@ -78,7 +80,11 @@ def add_student():
             (name, roll_number)
         )
         conn.commit()
-        return jsonify({"message": "Student added successfully"})
+        student_id = cursor.lastrowid
+        return jsonify({
+            "message": "Student added successfully",
+            "student_id": student_id
+        })
     except sqlite3.IntegrityError:
         return jsonify({"error": "Roll number already exists"}), 400
     finally:
@@ -124,6 +130,14 @@ def mark_attendance():
 
     conn = connect_db()
     cursor = conn.cursor()
+
+    
+    # ✅ NEW: Check if student exists
+    cursor.execute("SELECT id FROM students WHERE id=?", (student_id,))
+    if not cursor.fetchone():
+        conn.close()
+        return jsonify({"error": "Student not found"}), 404
+
 
     # Check duplicate attendance
     cursor.execute(
