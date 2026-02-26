@@ -1,3 +1,25 @@
-database.db
-.vscode/
+# Python cache
 __pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Database file
+database.db
+
+# Temporary images
+temp_*.jpg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# IDE folders
+.vscode/
+.idea/
